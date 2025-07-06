@@ -39,7 +39,7 @@ public class baseMove : MonoBehaviour
     [Tooltip("바닥 충돌판정할 위치")]
     [SerializeField] protected Vector3 feetPosOffset;
 
-    [SerializeField] protected BoxCollider2D groundCollider = null;
+    // [SerializeField] protected BoxCollider2D groundCollider = null;
 
     [Tooltip("현재 이동 예정 방향")]
     protected Vector3 curTargetPos;
