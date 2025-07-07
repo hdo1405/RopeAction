@@ -4,7 +4,7 @@ public class BaseHP : MonoBehaviour
 {
     [Header("체력 수치")]
     [Tooltip("최대 체력")]
-    [SerializeField] protected float maxHP = 100f;
+    [SerializeField] protected Definition.FStat maxHP = new Definition.FStat(100);
 
     [Tooltip("현재 체력")]
     [SerializeField] protected float curHP;
@@ -20,7 +20,7 @@ public class BaseHP : MonoBehaviour
     /// </summary>
     virtual protected void FullHeal()
     {
-        if (maxHP > 0) { curHP = maxHP; }
+        if (maxHP.FinalStat() > 0) { curHP = maxHP.FinalStat(); }
         else { Death(); }
     }
 

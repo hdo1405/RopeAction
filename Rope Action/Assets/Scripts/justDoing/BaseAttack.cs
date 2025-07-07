@@ -5,13 +5,13 @@ public class BaseAttack : MonoBehaviour
 {
     [Header("공격 관련 수치")]
     [Tooltip("공격력")]
-    [SerializeField] protected float attackPower = 1f;
+    [SerializeField] protected FStat attackPower = new FStat(10f);
 
     [Tooltip("공격 사거리")]
-    [SerializeField] protected float attackRange = 3f;
+    [SerializeField] protected FStat attackRange = new FStat(3f);
 
     [Tooltip("공격 주기")]
-    [SerializeField] protected float attackRate = 1f;
+    [SerializeField] protected FStat attackRate = new FStat(1f);
 
     [Tooltip("공격력, 주체 등 데이터")]
     [SerializeField] protected Definition.Damage defaultDamage;
@@ -29,7 +29,7 @@ public class BaseAttack : MonoBehaviour
 
     virtual protected void Start()
     {
-        defaultDamage = new Definition.Damage(attackPower, this.gameObject);
+        defaultDamage = new Definition.Damage(attackPower.FinalStat(), this.gameObject);
     }
 
     /// <summary>
@@ -38,7 +38,7 @@ public class BaseAttack : MonoBehaviour
     /// <returns>공격 가능하면 true 반환.</returns>
     virtual protected bool CanAttack()
     {
-        return (Time.time - lastAttackTime) >= attackRate;
+        return (Time.time - lastAttackTime) >= attackRate.FinalStat();
     }
 
     /// <summary>

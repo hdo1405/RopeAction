@@ -1,3 +1,4 @@
+using Definition;
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody2D))]
@@ -6,10 +7,10 @@ public class BaseMove : MonoBehaviour
 {
     [Header("이속 수치")]
     [Tooltip("이속")]
-    [SerializeField] protected float moveSpeed = 5f;
+    [SerializeField] protected FStat moveSpeed = new FStat(5f);
 
     [Tooltip("점프")]
-    [SerializeField] protected float jumpForce = 3f;
+    [SerializeField] protected FStat jumpForce = new FStat(3f);
 
     [Header("중력들")]
     [Tooltip("기본 중력")]
@@ -24,10 +25,10 @@ public class BaseMove : MonoBehaviour
     [Header("디버그 용 !읽기만 하세요!")]
     [Header("오브젝트 컴포넌트")]
     [Tooltip("이 오브젝트 rigidbody2D")]
-    [SerializeField] protected Rigidbody2D rigidbody = null;
+    [SerializeField] protected Rigidbody2D rigid = null;
 
     [Tooltip("이 오브젝트 collider")]
-    [SerializeField] protected Collider2D collider = null;
+    [SerializeField] protected Collider2D col = null;
 
 
     [Tooltip("발 판정 크기")]
@@ -53,23 +54,23 @@ public class BaseMove : MonoBehaviour
 
     virtual protected void Awake()
     {
-        if (rigidbody == null)
+        if (rigid == null)
         {
-            TryGetComponent<Rigidbody2D>(out rigidbody);
+            TryGetComponent<Rigidbody2D>(out rigid);
         }
 
-        if (collider == null)
+        if (col == null)
         {
-            TryGetComponent<Collider2D>(out collider);
+            TryGetComponent<Collider2D>(out col);
         }
 
-        if (collider != null)
+        if (col != null)
         {
             // groundCollider = this.gameObject.AddComponent<BoxCollider2D>();
 
             // groundCollider.size = groundColSize;
 
-            Vector3 groundColPos = new Vector3(collider.bounds.center.x, collider.bounds.min.y, collider.bounds.center.z);
+            Vector3 groundColPos = new Vector3(col.bounds.center.x, col.bounds.min.y, col.bounds.center.z);
 
             feetPosOffset = groundColPos;
 
@@ -90,7 +91,7 @@ public class BaseMove : MonoBehaviour
     {
         curTargetPos = target;
 
-        rigidbody.linearVelocity = curTargetPos * moveSpeed;
+        rigid.linearVelocity = curTargetPos * moveSpeed.FinalStat();
     }
 
     /// <summary>
