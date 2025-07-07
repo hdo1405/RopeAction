@@ -33,13 +33,22 @@ public class BaseAttack : MonoBehaviour
     }
 
     /// <summary>
+    /// 공격 가능한지 (Time.time - 마지막 공격시간)이 공격주기 이상이면 true.
+    /// </summary>
+    /// <returns>공격 가능하면 true 반환.</returns>
+    virtual protected bool CanAttack()
+    {
+        return (Time.time - lastAttackTime) >= attackRate;
+    }
+
+    /// <summary>
     /// target과 damage받음 <- 나중에 혹시 공격패턴, 데미지 여러개면 다른 Damage넣으라고.
     /// </summary>
     /// <param name="target"> 피격 대상</param>
     /// <param name="damage"> 공격 데미지</param>
-    virtual protected void Attack(BaseHP target, Damage damage)
+    virtual public void Attack(BaseHP target, Damage damage)
     {
-        if (Time.time - lastAttackTime < attackRate) return; // 아직 안지남
+        if (!CanAttack()) return; // 아직 안지남
 
         lastAttackTime = Time.time;
     }
