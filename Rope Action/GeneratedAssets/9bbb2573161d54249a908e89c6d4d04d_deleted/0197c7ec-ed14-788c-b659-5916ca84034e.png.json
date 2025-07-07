@@ -1,0 +1,20 @@
+{
+    "asset": "9bbb2573161d54249a908e89c6d4d04d",
+    "fileName": "0197c7ec-ed14-788c-b659-5916ca84034e.png",
+    "prompt": "A pixel art metallic claw device attached to the end of a cyberpunk-style wire, used for wall attachment in a 2D platformer game, with mechanical clamps and glowing blue lights, isolated on a transparent background, side view,metallic claw\r",
+    "negativePrompt": "wire, hook",
+    "model": "242b56c1-2224-41c4-8949-2ba760bbfc69",
+    "modelName": "16-bit Pixel",
+    "customSeed": -1,
+    "w3CTraceId": "d7aa65cfb51126c9922e983bf20d1465",
+    "refinementMode": "Generation",
+    "pixelateTargetSize": 0,
+    "pixelateKeepImageSize": false,
+    "pixelatePixelBlockSize": 0,
+    "pixelateMode": 0,
+    "pixelateOutlineThickness": 0,
+    "doodles": {
+        "m_Items": []
+    },
+    "upscaleFactor": 0
+}

@@ -1,0 +1,20 @@
+{
+    "asset": "9f4cc263356487a4db95528b25cb6595",
+    "fileName": "0197c801-16a4-791f-9cf7-de0b5d126d28.png",
+    "prompt": "A pixel art, side view, clamp, claw, medieval style , muted colors, minimal color palette, claw clamp, claw anchor",
+    "negativePrompt": "background, castle, building, sword, orange color",
+    "model": "242b56c1-2224-41c4-8949-2ba760bbfc69",
+    "modelName": "16-bit Pixel",
+    "customSeed": -1,
+    "w3CTraceId": "335f60ee51a0a8398361346801ab1b4b",
+    "refinementMode": "Generation",
+    "pixelateTargetSize": 0,
+    "pixelateKeepImageSize": false,
+    "pixelatePixelBlockSize": 0,
+    "pixelateMode": 0,
+    "pixelateOutlineThickness": 0,
+    "doodles": {
+        "m_Items": []
+    },
+    "upscaleFactor": 0
+}

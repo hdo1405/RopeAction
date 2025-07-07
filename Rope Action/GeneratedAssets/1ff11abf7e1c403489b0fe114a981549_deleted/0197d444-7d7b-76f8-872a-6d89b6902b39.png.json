@@ -1,0 +1,20 @@
+{
+    "asset": "1ff11abf7e1c403489b0fe114a981549",
+    "fileName": "0197d444-7d7b-76f8-872a-6d89b6902b39.png",
+    "prompt": "A seamless rope texture with a braided pattern, suitable for use in a Line Renderer. 256x256",
+    "negativePrompt": "",
+    "model": "242b56c1-2224-41c4-8949-2ba760bbfc69",
+    "modelName": "16-bit Pixel",
+    "customSeed": -1,
+    "w3CTraceId": "6c3f780fab65c6db9ccd158d4d1f840a",
+    "refinementMode": "Generation",
+    "pixelateTargetSize": 0,
+    "pixelateKeepImageSize": false,
+    "pixelatePixelBlockSize": 0,
+    "pixelateMode": 0,
+    "pixelateOutlineThickness": 0,
+    "doodles": {
+        "m_Items": []
+    },
+    "upscaleFactor": 0
+}

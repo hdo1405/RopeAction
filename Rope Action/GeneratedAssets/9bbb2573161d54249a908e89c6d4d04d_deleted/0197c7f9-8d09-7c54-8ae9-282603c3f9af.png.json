@@ -1,0 +1,20 @@
+{
+    "asset": "9bbb2573161d54249a908e89c6d4d04d",
+    "fileName": "0197c7f9-8d09-7c54-8ae9-282603c3f9af.png",
+    "prompt": "A pixel art, side view, clamp, claw\r",
+    "negativePrompt": "",
+    "model": "242b56c1-2224-41c4-8949-2ba760bbfc69",
+    "modelName": "16-bit Pixel",
+    "customSeed": -1,
+    "w3CTraceId": "aefb992f46b901371f7b998d4c6e4a7a",
+    "refinementMode": "Generation",
+    "pixelateTargetSize": 0,
+    "pixelateKeepImageSize": false,
+    "pixelatePixelBlockSize": 0,
+    "pixelateMode": 0,
+    "pixelateOutlineThickness": 0,
+    "doodles": {
+        "m_Items": []
+    },
+    "upscaleFactor": 0
+}
