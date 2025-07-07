@@ -1,9 +1,8 @@
-using System.Runtime.ExceptionServices;
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody2D))]
 [RequireComponent(typeof(Collider2D))]
-public class baseMove : MonoBehaviour
+public class BaseMove : MonoBehaviour
 {
     [Header("이속 수치")]
     [Tooltip("이속")]
@@ -45,7 +44,11 @@ public class baseMove : MonoBehaviour
     protected Vector3 curTargetPos;
 
     [property:Tooltip("현재 이동 예정 방향_읽기 전용")]
-    public Vector3 CurTargetPos { get { return curTargetPos; } protected set { curTargetPos = value; } }
+    public Vector3 CurTargetPos 
+    { 
+        get { return curTargetPos; } 
+        protected set { curTargetPos = value; } 
+    }
 
     virtual protected void Start()
     {
