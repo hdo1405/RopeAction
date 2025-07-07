@@ -2,6 +2,23 @@ using UnityEngine;
 
 namespace Definition
 {
+    /// <summary>
+    /// 사칙연산 가능한 자료형만 사용하세요
+    /// </summary>
+    //public class Stat<T> where T : System.Numerics.INumber<T>
+    //{
+    //    T baseStat;
+    //    T add;
+    //    float multiple;
+    //    float lastMultiple;
+    //    T lastAdd;
+
+    //    T FinalStat()
+    //    {
+    //        return (baseStat * multiple + add) * lastMultiple + lastAdd;
+    //    }
+    //}
+
     public class Damage
     {
         // ----- variables -----

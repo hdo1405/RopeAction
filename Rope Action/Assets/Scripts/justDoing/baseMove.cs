@@ -18,27 +18,28 @@ public class BaseMove : MonoBehaviour
     [Tooltip("공중 중력")]
     [SerializeField] protected float airborneGravity = 15f;
 
-    [Header("오브젝트 컴포넌트")]
-    [Tooltip("이 오브젝트 rigidbody2D")]
-    [SerializeField] protected Rigidbody2D myRB = null;
-
-    [Tooltip("이 오브젝트 collider")]
-    [SerializeField] protected Collider2D myCol = null;
-
-    [Header("땅 판정")]
-    [Tooltip("땅 판정 bool")]
-    [SerializeField] protected bool isGrounded = false;
-
-    [Tooltip("발 판정 크기")]
-    [SerializeField] protected Vector2 groundColSize = new Vector2(1f, 0.1f);
-
     [Tooltip("이동 가능 레이어")]
     [SerializeField] protected LayerMask moveableLayer;
+
+    [Header("디버그 용 !읽기만 하세요!")]
+    [Header("오브젝트 컴포넌트")]
+    [Tooltip("이 오브젝트 rigidbody2D")]
+    [SerializeField] protected Rigidbody2D rigidbody = null;
+
+    [Tooltip("이 오브젝트 collider")]
+    [SerializeField] protected Collider2D collider = null;
+
+
+    [Tooltip("발 판정 크기")]
+    [SerializeField] protected Vector2 feetSize = new Vector2(1f, 0.1f);
+    // [SerializeField] protected BoxCollider2D groundCollider = null;
 
     [Tooltip("바닥 충돌판정할 위치")]
     [SerializeField] protected Vector3 feetPosOffset;
 
-    // [SerializeField] protected BoxCollider2D groundCollider = null;
+    [Header("땅 판정")]
+    [Tooltip("땅 판정 bool")]
+    [SerializeField] protected bool isGrounded = false;
 
     [Tooltip("현재 이동 예정 방향")]
     protected Vector3 curTargetPos;
@@ -50,25 +51,25 @@ public class BaseMove : MonoBehaviour
         protected set { curTargetPos = value; } 
     }
 
-    virtual protected void Start()
+    virtual protected void Awake()
     {
-        if (myRB == null)
+        if (rigidbody == null)
         {
-            TryGetComponent<Rigidbody2D>(out myRB);
+            TryGetComponent<Rigidbody2D>(out rigidbody);
         }
 
-        if (myCol == null)
+        if (collider == null)
         {
-            TryGetComponent<Collider2D>(out myCol);
+            TryGetComponent<Collider2D>(out collider);
         }
 
-        if (myCol != null)
+        if (collider != null)
         {
             // groundCollider = this.gameObject.AddComponent<BoxCollider2D>();
 
             // groundCollider.size = groundColSize;
 
-            Vector3 groundColPos = new Vector3(myCol.bounds.center.x, myCol.bounds.min.y, myCol.bounds.center.z);
+            Vector3 groundColPos = new Vector3(collider.bounds.center.x, collider.bounds.min.y, collider.bounds.center.z);
 
             feetPosOffset = groundColPos;
 
@@ -89,7 +90,7 @@ public class BaseMove : MonoBehaviour
     {
         curTargetPos = target;
 
-        myRB.linearVelocity = curTargetPos * moveSpeed;
+        rigidbody.linearVelocity = curTargetPos * moveSpeed;
     }
 
     /// <summary>
@@ -98,6 +99,6 @@ public class BaseMove : MonoBehaviour
     virtual protected void CheckGround()
     {
         Vector2 temp = new Vector2(this.transform.position.x, this.transform.position.y + feetPosOffset.y);
-        isGrounded = Physics2D.OverlapBox(temp, groundColSize, 0f, moveableLayer);
+        isGrounded = Physics2D.OverlapBox(temp, feetSize, 0f, moveableLayer);
     }
 }
