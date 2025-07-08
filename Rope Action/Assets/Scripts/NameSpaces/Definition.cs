@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Numerics;
+using System;
 
 namespace Definition
 {
@@ -51,6 +52,8 @@ namespace Definition
             this.baseStat = baseStat;
         }
 
+        //-----Operator------
+
         //-----function-----
         /// <summary>
         /// 곱하고 더한 최종 스텟 반환
@@ -59,6 +62,21 @@ namespace Definition
         public float FinalStat()
         {
             return ((((baseStat * multiple) + add) * lastMultiple) + lastAdd);
+        }
+
+        /// <summary>
+        /// 자기 자신 값을 복사해 새로운 스텟 반환
+        /// </summary>
+        /// <returns>값이 똑같은 새로운 스텟</returns>
+        public FStat Clone()
+        {
+            FStat newStat = new FStat(this.baseStat);
+            newStat.add = this.add;
+            newStat.multiple = this.multiple;
+            newStat.lastAdd = this.lastAdd;
+            newStat.lastMultiple = this.lastMultiple;
+
+            return newStat;
         }
     }
 
@@ -101,6 +119,21 @@ namespace Definition
         public int FinalStat()
         {
             return (int)((((baseStat * multiple) + add) * lastMultiple) + lastAdd);
+        }
+
+        /// <summary>
+        /// 자기 자신 값을 복사해 새로운 스텟 반환
+        /// </summary>
+        /// <returns>값이 똑같은 새로운 스텟</returns>
+        public IStat Clone()
+        {
+            IStat newStat = new IStat(this.baseStat);
+            newStat.add = this.add;
+            newStat.multiple = this.multiple;
+            newStat.lastAdd = this.lastAdd;
+            newStat.lastMultiple = this.lastMultiple;
+
+            return newStat;
         }
     }
 
