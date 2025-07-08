@@ -10,7 +10,7 @@ public class WirePhysics : MonoBehaviour
     void Update()
     {
         Vector2 dir = (this.transform.position - player.transform.position).normalized;
-        float dis = (this.transform.position - player.transform.position).sqrMagnitude;
+        float dis = (this.transform.position - player.transform.position).magnitude;
 
         if (Input.GetKey(KeyCode.Space))
         {
@@ -24,7 +24,7 @@ public class WirePhysics : MonoBehaviour
             Debug.Log(dir);
             player.linearVelocity = dir * pullingForce;
 
-            curRopeLength = (this.transform.position - player.transform.position).sqrMagnitude;
+            curRopeLength = (this.transform.position - player.transform.position).magnitude;
         }
         else if (Input.GetMouseButton(1))
         {
@@ -32,12 +32,24 @@ public class WirePhysics : MonoBehaviour
         }
 
 
-        if (dis > curRopeLength)
+    }
+
+    private void LateUpdate()
+    {
+        Vector2 dir = ((Vector2)(this.transform.position - player.transform.position)).normalized;
+        float dis = ((Vector2)(this.transform.position - player.transform.position)).magnitude;
+
+        Debug.Log(dis);
+
+        if (dis >= curRopeLength)
         {
             Vector2 playerSpeed = player.linearVelocity;
-            Vector2 newPlayerSpeed = playerSpeed - Vector2.Dot(playerSpeed, dir) * dir;
-
-            player.linearVelocity = newPlayerSpeed;
+            if (Vector2.Dot(playerSpeed, dir) <= 0)
+            {
+                Vector2 newPlayerSpeed = playerSpeed - Vector2.Dot(playerSpeed, dir) * dir;
+                player.linearVelocity = newPlayerSpeed;
+            }
+            player.transform.position = this.transform.position - (Vector3)(dir * curRopeLength);
         }
     }
 }
