@@ -7,8 +7,22 @@ public class BaseAttack : MonoBehaviour
     [Tooltip("공격력")]
     [SerializeField] protected FStat attackPower = new FStat(10f);
 
+    [Tooltip("공격력 프로퍼티")]
+    public FStat AttackPower
+    {
+        get { return attackPower; }
+        set { attackPower = value; }
+    }
+
     [Tooltip("공격 사거리")]
     [SerializeField] protected FStat attackRange = new FStat(3f);
+
+    [Tooltip("공격 사거리 프로퍼티")]
+    public FStat AttackRange
+    {
+        get { return attackRange; }
+        set { attackRange = value; }
+    }
 
     [Tooltip("공격 주기")]
     [SerializeField] protected FStat attackRate = new FStat(1f);
