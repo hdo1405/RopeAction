@@ -21,7 +21,6 @@ public class WirePhysics : MonoBehaviour
                 return;
             }
 
-            Debug.Log(dir);
             player.linearVelocity = dir * pullingForce;
 
             curRopeLength = (this.transform.position - player.transform.position).magnitude;
