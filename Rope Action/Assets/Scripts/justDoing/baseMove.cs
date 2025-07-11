@@ -37,8 +37,12 @@ public class BaseMove : MonoBehaviour
     [SerializeField] protected Vector2 feetSize = new Vector2(1f, 0.1f);
     // [SerializeField] protected BoxCollider2D groundCollider = null;
 
+
+    protected BaseController baseController;
     virtual protected void Awake()
     {
+        TryGetComponent<BaseController>(out baseController);
+
         if (rigid == null)
         {
             TryGetComponent<Rigidbody2D>(out rigid);
@@ -84,8 +88,14 @@ public class BaseMove : MonoBehaviour
 
         rigid.linearVelocity = target * moveSpeed.FinalStat();
     }
+    virtual public void MoveTo(Transform target)
+    {
+        //curTargetPos = target;
 
-    private float curVelocity;
+        rigid.linearVelocity = target.position * moveSpeed.FinalStat();
+    }
+
+    protected float curVelocity;
     virtual public void MoveToX(float x)
     {
         if (x != 0) x = Mathf.Sign(x);
@@ -113,12 +123,14 @@ public class BaseMove : MonoBehaviour
 
     [Header("점프")]
     [Tooltip("점프 선입력 시간")]
-    [SerializeField] private float jumpBufferTime = 0;
-    private float jumpBufferTimer = -1;
+    [SerializeField] protected float jumpBufferTime = 0;
+    protected float jumpBufferTimer = -1;
+    public float JumpBufferTimer { get { return jumpBufferTime; } }
 
     [Tooltip("점프 유예 시간")]
-    [SerializeField] private float coyoteTime = 0;
-    private float coyoteTimer = -1;
+    [SerializeField] protected float coyoteTime = 0;
+    protected float coyoteTimer = -1;
+    public float CoyoteTimer { get { return coyoteTimer; } }
 
     virtual public void Jump()
     {
@@ -176,6 +188,7 @@ public class BaseMove : MonoBehaviour
     [Header("땅 판정")]
     [Tooltip("땅 판정 bool")]
     [SerializeField] protected bool isGrounded = false;
+    public bool IsGrounded{get{ return isGrounded; }}
 
     [Header("점프키를 계속 누르고 있는지")]
     public bool isLongJump = false;

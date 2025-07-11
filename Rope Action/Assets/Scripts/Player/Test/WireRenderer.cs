@@ -3,38 +3,70 @@ using UnityEngine;
 public class WireRenderer : MonoBehaviour
 {
     private LineRenderer line;
+    [SerializeField]
+    private WirePhysics wirePhysics;
 
     [SerializeField]
     private Transform player;
     [SerializeField]
     private Transform hook;
-    //[SerializeField]
-    //Vector2D textureTileSize;
+
+    [SerializeField]
+    private int pointCount;
+    [SerializeField]
+    private float slackScale;
 
     private void Awake()
     {
         line = this.GetComponent<LineRenderer>();
-        line.positionCount = 2;
+        line.positionCount = pointCount;
         line.useWorldSpace = true;
         //line.material.mainTextureScale = textureTileSize;
     }
 
+    Vector3 endPos;
+    Vector3 startPos;
+    Vector3 center;
+    float slack;
+    Vector3 control;
+
+    private float wireLength;
     private void LateUpdate()
     {
+        if (wirePhysics == null) return;
+
+        wireLength = wirePhysics.CurWireLength;
+
         if (player == null) return;
         if (hook == null) return;
 
         //UpdateLineTextureTiling(line);
 
-        Vector3 endPos = player.position;
-        Vector3 startPos = hook.position;
+        endPos = player.position;
+        startPos = hook.position;
+        center = (endPos + startPos) / 2;
+
+        float dis = (startPos - endPos).magnitude;
+        slack = dis - wireLength;
+
+        control = center + Vector3.down * slack * slackScale;
 
         startPos.z += 1;
         endPos.z += 1;
 
-        line.SetPosition(0, startPos);
-        line.SetPosition(1, endPos);
+        for (int i = 0; i < pointCount; i++)
+        {
+            line.SetPosition(i, CalculateCurve((float)i/pointCount));
+        }
     }
+
+    private Vector3 CalculateCurve(float t)
+    {
+        return Mathf.Pow(1 - t, 2) * startPos +
+               2 * (1 - t) * t * control +
+               Mathf.Pow(t, 2) * endPos;
+    }
+
 
 
     //void UpdateLineTextureTiling(LineRenderer line)
