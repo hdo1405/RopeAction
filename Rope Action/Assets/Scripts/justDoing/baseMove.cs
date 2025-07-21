@@ -26,6 +26,11 @@ public class BaseMove : MonoBehaviour
     public float JumpGravity { get { return jumpGravity; } set { jumpGravity = value; } }
 
 
+    [Header("발 바닥")]
+    [Tooltip("발 판정 크기")]
+    [SerializeField] protected Vector2 feetSize = new Vector2(1f, 0.1f);
+    [Tooltip("발 판정 x 좌표 오프셋")]
+    [SerializeField] protected float feetPosOffsetX = 0f;
 
     [Header("기타 등등")]
 
@@ -33,8 +38,6 @@ public class BaseMove : MonoBehaviour
     [SerializeField] protected LayerMask moveableLayer;
     public LayerMask MoveableLayer { get { return moveableLayer; } set { moveableLayer = value; } }
 
-    [Tooltip("발 판정 크기")]
-    [SerializeField] protected Vector2 feetSize = new Vector2(1f, 0.1f);
     // [SerializeField] protected BoxCollider2D groundCollider = null;
 
 
@@ -55,27 +58,32 @@ public class BaseMove : MonoBehaviour
 
         if (col != null)
         {
+            float localMinY = col.bounds.min.y - transform.position.y;
+            feetPosOffset = new Vector2(feetPosOffsetX, localMinY);
+
+            #region 구시대의 유물
             // groundCollider = this.gameObject.AddComponent<BoxCollider2D>();
 
             // groundCollider.size = groundColSize;
 
-            Vector2 groundColPos = new Vector2(col.bounds.center.x, col.bounds.min.y);
+            //Vector2 groundColPos = new Vector2(col.bounds.center.x, col.bounds.min.y);
 
-            feetPosOffset = groundColPos - (Vector2)this.transform.position;
+            //feetPosOffset = groundColPos - (Vector2)this.transform.position;
 
-            // groundCollider.offset = groundColPos;
+            // groundCollider.offset = groundColPos; 
+            #endregion
         }
     }
 
     virtual protected void Update()
     {
         CheckGround();
+        JumpAdditive();
     }
 
     virtual protected void FixedUpdate()
     {
         JumpHeightUpdate();
-        JumpAdditive();
     }
 
     /// <summary>
@@ -170,7 +178,19 @@ public class BaseMove : MonoBehaviour
     virtual protected void CheckGround()
     {
         Vector2 temp = new Vector2(this.transform.position.x, this.transform.position.y + feetPosOffset.y);
-        isGrounded = Physics2D.OverlapBox(temp, feetSize, 0f, moveableLayer);
+        isGrounded = Physics2D.OverlapBox(temp, feetSize, 0f, moveableLayer) != null;
+
+        // drawline기능 -- 충돌범위 보이게
+        Debug.DrawLine(
+            temp + Vector2.left * feetSize.x * 0.5f,
+            temp + Vector2.right * feetSize.x * 0.5f,
+            isGrounded ? Color.green : Color.red
+        );
+        Debug.DrawLine(
+            temp + Vector2.up * feetSize.y * 0.5f,
+            temp + Vector2.down * feetSize.y * 0.5f,
+            isGrounded ? Color.green : Color.red
+        );
     }
 
 

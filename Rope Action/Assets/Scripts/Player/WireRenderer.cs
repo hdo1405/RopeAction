@@ -4,7 +4,7 @@ public class WireRenderer : MonoBehaviour
 {
     private LineRenderer line;
     [SerializeField]
-    private WirePhysics wirePhysics;
+    private HookMove hookMove;
 
     [SerializeField]
     private Transform player;
@@ -33,9 +33,9 @@ public class WireRenderer : MonoBehaviour
     private float wireLength;
     private void LateUpdate()
     {
-        if (wirePhysics == null) return;
+        if (hookMove == null) return;
 
-        wireLength = wirePhysics.CurWireLength;
+        wireLength = hookMove.CurWireLength;
 
         if (player == null) return;
         if (hook == null) return;

@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class WirePhysics : BaseMove
+public class HookMove : BaseMove
 {
     [SerializeField]
     private Rigidbody2D player;
@@ -11,18 +11,20 @@ public class WirePhysics : BaseMove
     private LayerMask attachableLayer;
     [SerializeField]
     private Definition.FStat pullingForce = new Definition.FStat(10);
+    public Definition.FStat PullingForce { get { return pullingForce; } }
     [SerializeField]
     private Definition.FStat maxWireLength = new Definition.FStat(10);
+    public Definition.FStat MaxWireLength { get { return maxWireLength; } }
     [SerializeField]
     private float curWireLength;
-    public float CurWireLength { get { return curWireLength; } }
+    public float CurWireLength { get { return curWireLength; } set { curWireLength = value; } }
 
     private PlayerController playerController;
     override protected void Awake()
     {
         base.Awake();
         mainCamera = Camera.main;
-        player.TryGetComponent<PlayerController>(out playerController);
+        player.TryGetComponent(out playerController);
     }
 
     override protected void Update()
@@ -43,12 +45,10 @@ public class WirePhysics : BaseMove
         isShooted = true;
         this.transform.position = home.position;
         curWireLength = maxWireLength.FinalStat();
-        fireDir = (mainCamera.ScreenToWorldPoint(Input.mousePosition) - this.transform.position).normalized;
+        fireDir = playerController.MouseDir;
     }
     private void UpdateHookShot()
     {
-        Debug.Log(isShooted);
-
         if (!isShooted)
         {
             this.transform.position = home.position;
@@ -92,59 +92,45 @@ public class WirePhysics : BaseMove
         }
     }
 
-    protected void LateUpdate()
-    {
-        WirePhysicsCal();
-    }
-    private void WirePhysicsCal()
-    {
-        if (playerController.IsHookAnchored)
-        {
-            Vector2 dir = ((Vector2)(player.transform.position - this.transform.position)).normalized;
-            float dis = ((Vector2)(player.transform.position - this.transform.position)).magnitude;
+    //private void LateUpdate()
+    //{
+    //    WirePhysicsCal();
+    //}
+    //private void WirePhysicsCal()
+    //{
+    //    if (playerController.IsHookAnchored)
+    //    {
+    //        Vector2 dir = ((Vector2)(this.transform.position - player.transform.position)).normalized;
+    //        float dis = ((Vector2)(this.transform.position - player.transform.position)).magnitude;
 
-            if (dis >= curWireLength)
-            {
-                playerController.IsWireTensioned = true;
-
-                Vector2 playerSpeed = player.linearVelocity;
-                if (Vector2.Dot(playerSpeed, dir) >= 0)
-                {
-                    Vector2 newPlayerSpeed = playerSpeed - Vector2.Dot(playerSpeed, dir) * dir;
-                    player.linearVelocity = newPlayerSpeed;
-                }
-                player.transform.position = this.transform.position + (Vector3)(dir * curWireLength);
-            }
-            else
-            {
-                playerController.IsWireTensioned = false;
-            }
-        }
-    }
+    //        if (dis >= curWireLength)
+    //        {
+    //            Vector2 playerSpeed = player.linearVelocity;
+    //            if (Vector2.Dot(playerSpeed, dir) <= 0)
+    //            {
+    //                Vector2 newPlayerSpeed = playerSpeed - Vector2.Dot(playerSpeed, dir) * dir;
+    //                player.linearVelocity = newPlayerSpeed;
+    //            }
+    //            player.transform.position = this.transform.position - (Vector3)(dir * curWireLength);
+    //        }
+    //    }
+    //}
 
 
-    public void ZipUpWire()
-    {
-        curWireLength -= Time.deltaTime * pullingForce.FinalStat();
+    //public void ZipUpWire()
+    //{
+    //    Vector2 dir = (this.transform.position - player.transform.position).normalized;
+    //    float dis = (this.transform.position - player.transform.position).magnitude;
 
-        if (curWireLength <= 0)
-        {
-            curWireLength = 0;
-            player.linearVelocity = Vector2.zero;
-            player.transform.position = this.transform.position;
-        }
-        //Vector2 dir = (this.transform.position - player.transform.position).normalized;
-        //float dis = (this.transform.position - player.transform.position).magnitude;
+    //    if (dis < Time.deltaTime * pullingForce.FinalStat())
+    //    {
+    //        player.linearVelocity = Vector2.zero;
+    //        player.transform.position = this.transform.position;
+    //        return;
+    //    }
 
-        //if (dis < Time.deltaTime * pullingForce.FinalStat())
-        //{
-        //    player.linearVelocity = Vector2.zero;
-        //    player.transform.position = this.transform.position;
-        //    return;
-        //}
+    //    player.linearVelocity = dir * pullingForce.FinalStat();
 
-        //player.linearVelocity = dir * pullingForce.FinalStat();
-
-        //curWireLength = (this.transform.position - player.transform.position).magnitude;
-    }
+    //    curWireLength = (this.transform.position - player.transform.position).magnitude;
+    //}
 }
