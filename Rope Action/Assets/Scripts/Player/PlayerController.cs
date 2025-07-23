@@ -5,6 +5,8 @@ public class PlayerController : BaseController
 {
     [SerializeField]
     private HookMove hookMove;
+    [SerializeField]
+    private CrossHairRenderer crossHairRenderer;
 
     [Header("---------------------------------------------------------------------------------------")]
     [Header("키 코드")]
@@ -15,7 +17,9 @@ public class PlayerController : BaseController
     [SerializeField]
     private KeyCode rightKeyCode = KeyCode.D;
     [SerializeField]
-    private KeyCode hookReturnKeyCode = KeyCode.LeftShift;
+    private KeyCode hookReturnKeyCode = KeyCode.R;
+    [SerializeField]
+    private KeyCode wireJumpKeyCode = KeyCode.LeftShift;
 
 
     [Header("---------------------------------------------------------------------------------------")]
@@ -48,45 +52,95 @@ public class PlayerController : BaseController
     }
     private void Update()
     {
-        InputController();
+        InputManage();
     }
 
-    private void InputController()
+    #region Events
+    public event Action OnJumpStart;
+    public void InvokeOnJumpStart()
+    {
+        OnJumpStart?.Invoke();
+    }
+    public event Action<int> OnWalking;
+    #endregion
+
+    private void InputManage()
+    {
+        bool isCommonState = true;
+
+        //갈고리가 박혔을때
+        if (IsHookAnchored)
+        {
+            DuringHookAnchored();
+
+            if (IsWireTensioned)
+            {
+                //줄이 팽팽할 때
+                DuringWireTensioned();
+            }
+
+            isCommonState = false;
+        }
+        
+        //특이사항이 없을때
+        if (isCommonState)
+        {
+            WhenCommon();
+        }
+
+        //조준중일 때
+        if (Input.GetMouseButton(1))
+        {
+            DuringAiming();
+        }
+        //조준중이 아닐 때
+        else
+        {
+            DuringNotAiming();
+        }
+
+
+        CheckAlways();
+
+        //UpdateMove();
+        //UpdateWire();
+    }
+
+    private void DuringHookAnchored()
+    {
+        if (Input.GetKey(hookReturnKeyCode))
+        {
+            hookMove.ReturnHookShot();
+        }
+        if (Input.GetKey(wireJumpKeyCode))
+        {
+            playerMove.WireJump();
+        }
+    }
+    private void DuringWireTensioned()
+    {
+    }
+    private void DuringAiming()
+    {
+        crossHairRenderer.showCrossHair = true;
+
+        if (Input.GetMouseButtonDown(0))
+        {
+            hookMove.FireHookShot();
+        }
+    }
+    private void DuringNotAiming()
+    {
+        crossHairRenderer.showCrossHair = false;
+    }
+    private void WhenCommon()
+    { 
+    }
+
+    private void CheckAlways()
     {
         mouseDir = ((Vector2)(mainCamera.ScreenToWorldPoint(Input.mousePosition) - this.transform.position)).normalized;
-        UpdateMove();
-        UpdateWire();
 
-        //--------------------------------------------------------------------------------------------------------------------------
-
-        //{
-
-        //}
-
-        //bool isCommonState = true;
-
-        //if (IsHookAnchored)
-        //{
-        //    isCommonState = false;
-        //}
-
-        //if (IsWireTensioned)
-        //{
-        //    isCommonState = false;
-        //}
-
-        //if (isCommonState)
-        //{ 
-
-        //}
-    }
-
-
-    #region Move
-    public event Action OnJumpStart;
-    public event Action<int> OnWalking;
-    private void UpdateMove()
-    {
         if (Input.GetKeyDown(jumpKeyCode))
         {
             playerMove.Jump();
@@ -116,33 +170,66 @@ public class PlayerController : BaseController
             playerMove.MoveToX(x);
         else if (!IsWireTensioned)
             playerMove.MoveToX(x);
+    }
 
-        //playerMove.MoveToX(Input.GetAxis("Horizontal"));
-    }
-    public void InvokeOnJumpStart()
-    {
-        OnJumpStart?.Invoke();
-    }
-    #endregion
+    //구시대의 유물들
+    //#region Move
+    //public event Action OnJumpStart;
+    //public event Action<int> OnWalking;
+    //private void UpdateMove()
+    //{
+    //    if (Input.GetKeyDown(jumpKeyCode))
+    //    {
+    //        playerMove.Jump();
+    //        playerMove.isLongJump = true;
+    //    }
+    //    else if (Input.GetKeyUp(jumpKeyCode))
+    //    {
+    //        playerMove.isLongJump = false;
+    //    }
 
-    #region Wire
-    private void UpdateWire()
-    {
-        if (isHookAnchored == true)
-        {
-            if (Input.GetKey(hookReturnKeyCode))
-            {
-                hookMove.ReturnHookShot();
-            }
-            if (Input.GetMouseButtonDown(1))
-            {
-                playerMove.WireJump();
-            }
-        }
-        if (Input.GetMouseButtonDown(0))
-        {
-            hookMove.FireHookShot();
-        }
-    }
-    #endregion
+    //    int x = 0;
+    //    if (Input.GetKey(leftKeyCode))
+    //    {
+    //        x -= 1;
+    //    }
+    //    if (Input.GetKey(rightKeyCode))
+    //    {
+    //        x += 1;
+    //    }
+
+    //    if (x != 0 && playerMove.IsGrounded)
+    //    {
+    //        OnWalking?.Invoke(x);
+    //    }
+
+    //    if (x != 0)
+    //        playerMove.MoveToX(x);
+    //    else if (!IsWireTensioned)
+    //        playerMove.MoveToX(x);
+
+    //    //playerMove.MoveToX(Input.GetAxis("Horizontal"));
+    //}
+    //#endregion
+
+    //#region Wire
+    //private void UpdateWire()
+    //{
+    //    if (isHookAnchored == true)
+    //    {
+    //        if (Input.GetKey(hookReturnKeyCode))
+    //        {
+    //            hookMove.ReturnHookShot();
+    //        }
+    //        if (Input.GetMouseButtonDown(1))
+    //        {
+    //            playerMove.WireJump();
+    //        }
+    //    }
+    //    if (Input.GetMouseButtonDown(0))
+    //    {
+    //        hookMove.FireHookShot();
+    //    }
+    //}
+    //#endregion
 }

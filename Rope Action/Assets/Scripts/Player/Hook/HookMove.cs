@@ -23,7 +23,6 @@ public class HookMove : BaseMove
     override protected void Awake()
     {
         base.Awake();
-        mainCamera = Camera.main;
         player.TryGetComponent(out playerController);
     }
 
@@ -38,7 +37,6 @@ public class HookMove : BaseMove
     private bool isShooted = false;
     [SerializeField]
     private Vector2 fireDir;
-    private Camera mainCamera;
     public void FireHookShot()
     {
         playerController.IsHookAnchored = false;

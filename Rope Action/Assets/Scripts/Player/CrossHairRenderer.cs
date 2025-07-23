@@ -10,8 +10,7 @@ public class CrossHairRenderer : MonoBehaviour
     [SerializeField]
     private Transform player;
 
-    [SerializeField]
-    private bool isEnabled = false;
+    public bool showCrossHair = false;
 
     private void Awake()
     {
@@ -23,7 +22,7 @@ public class CrossHairRenderer : MonoBehaviour
 
     void Update()
     {
-        if (isEnabled)
+        if (showCrossHair)
         {
             line.enabled = true;
             line.SetPosition(0, player.position);
