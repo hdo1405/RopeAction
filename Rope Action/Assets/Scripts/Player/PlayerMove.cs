@@ -56,7 +56,7 @@ public class PlayerMove : BaseMove
         }
     }
 
-    [SerializeField]private int remainedJumpCount = 0;
+    [SerializeField] private int remainedJumpCount = 0;
     protected override void JumpAdditive()
     {
         if (isGrounded)
@@ -102,7 +102,7 @@ public class PlayerMove : BaseMove
     }
     private void WirePhysicsCal()
     {
-        if (playerController.IsHookAnchored)
+        if (playerController.IsHookAnchored && !playerController.IsHookAnchoredAtOBJ)
         {
             Vector2 dir = ((Vector2)(hookRigid.transform.position - this.transform.position)).normalized;
             float dis = ((Vector2)(hookRigid.transform.position - this.transform.position)).magnitude;

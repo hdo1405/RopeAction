@@ -34,6 +34,9 @@ public class PlayerController : BaseController
     [SerializeField]
     private bool isHookAnchored = false;
     public bool IsHookAnchored { get { return isHookAnchored; } set { isHookAnchored = value; } }
+    [SerializeField]
+    private bool isHookAnchoredAtOBJ = false;
+    public bool IsHookAnchoredAtOBJ { get { return isHookAnchoredAtOBJ; } set { isHookAnchoredAtOBJ = value; } }
 
     [SerializeField]
     private bool isWireTensioned = false;
@@ -108,13 +111,21 @@ public class PlayerController : BaseController
 
     private void DuringHookAnchored()
     {
-        if (Input.GetKey(hookReturnKeyCode))
+        //if (Input.GetKey(hookReturnKeyCode))
+        if(Input.GetMouseButtonUp(1))
         {
             hookMove.ReturnHookShot();
         }
         if (Input.GetKey(wireJumpKeyCode))
         {
-            playerMove.WireJump();
+            if (isHookAnchoredAtOBJ)
+            {
+                hookMove.PullingAnchoredOBJ();
+            }
+            else
+            {
+                playerMove.WireJump();
+            }
         }
     }
     private void DuringWireTensioned()
@@ -122,8 +133,6 @@ public class PlayerController : BaseController
     }
     private void DuringAiming()
     {
-        crossHairRenderer.showCrossHair = true;
-
         if (Input.GetMouseButtonDown(0))
         {
             hookMove.FireHookShot();
@@ -131,14 +140,18 @@ public class PlayerController : BaseController
     }
     private void DuringNotAiming()
     {
-        crossHairRenderer.showCrossHair = false;
     }
     private void WhenCommon()
-    { 
+    {
+        if (Input.GetMouseButtonDown(1))
+        {
+            hookMove.FireHookShot();
+        }
     }
 
     private void CheckAlways()
     {
+        #region Move
         mouseDir = ((Vector2)(mainCamera.ScreenToWorldPoint(Input.mousePosition) - this.transform.position)).normalized;
 
         if (Input.GetKeyDown(jumpKeyCode))
@@ -170,6 +183,16 @@ public class PlayerController : BaseController
             playerMove.MoveToX(x);
         else if (!IsWireTensioned)
             playerMove.MoveToX(x);
+        #endregion
+
+        if (Input.GetMouseButtonDown(0))
+        {
+            crossHairRenderer.showCrossHair = true;
+        }
+        else if (Input.GetMouseButtonUp(0))
+        {
+            crossHairRenderer.showCrossHair = false;
+        }
     }
 
     //구시대의 유물들

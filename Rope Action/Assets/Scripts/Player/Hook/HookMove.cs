@@ -10,6 +10,8 @@ public class HookMove : BaseMove
     [SerializeField]
     private LayerMask attachableLayer;
     [SerializeField]
+    private LayerMask movingAttachableLayer;
+    [SerializeField]
     private Definition.FStat pullingForce = new Definition.FStat(10);
     public Definition.FStat PullingForce { get { return pullingForce; } }
     [SerializeField]
@@ -45,8 +47,15 @@ public class HookMove : BaseMove
         curWireLength = maxWireLength.FinalStat();
         fireDir = playerController.MouseDir;
     }
+
+
     private void UpdateHookShot()
     {
+        if (playerController.IsHookAnchoredAtOBJ == true && anchoredOBJTransform == null)
+        {
+            ReturnHookShot();
+        }
+
         if (!isShooted)
         {
             this.transform.position = home.position;
@@ -73,6 +82,11 @@ public class HookMove : BaseMove
     }
     public void ReturnHookShot()
     {
+        this.transform.SetParent(null);
+        anchoredOBJTransform = null;
+        anchoredOBJMove = null;
+        playerController.IsHookAnchoredAtOBJ = false;
+
         playerController.IsHookAnchored = false;
         playerController.IsWireTensioned = false;
         isShooted = false;
@@ -82,12 +96,38 @@ public class HookMove : BaseMove
     }
     #endregion
 
+    private Transform anchoredOBJTransform;
+    private BaseMove anchoredOBJMove;
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if ((attachableLayer.value & (1 << collision.gameObject.layer)) != 0)
         {
             AnchoringHookShot();
         }
+        if ((movingAttachableLayer.value & (1 << collision.gameObject.layer)) != 0)
+        {
+            if (collision.TryGetComponent<BaseMove>(out anchoredOBJMove))
+            {
+                AnchoringHookShot();
+                playerController.IsHookAnchoredAtOBJ = true;
+                this.transform.SetParent(collision.transform);
+                anchoredOBJTransform = collision.transform;
+                this.transform.localPosition = Vector3.zero;
+            }
+        }
+    }
+
+    public void PullingAnchoredOBJ()
+    {
+        if (anchoredOBJMove == null)
+        {
+            ReturnHookShot();
+            return;
+        }
+
+        anchoredOBJMove.MoveTo(player.transform, pullingForce.FinalStat());
+        Debug.Log("²ø¾ú´Ù!");
+        ReturnHookShot();
     }
 
     //private void LateUpdate()
