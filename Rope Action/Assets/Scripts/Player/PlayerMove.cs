@@ -88,7 +88,7 @@ public class PlayerMove : BaseMove
             }
 
 
-            if (playerController.IsWireTensioned && !IsGrounded)
+            if (playerController.IsWireTensioned && !IsGrounded && !playerController.IsHookAnchoredAtOBJ)
             {
                 SwingJump();
             }
@@ -102,15 +102,19 @@ public class PlayerMove : BaseMove
     }
     private void WirePhysicsCal()
     {
+        if (!playerController.IsHookAnchored) return;
+
+        float dis = ((Vector2)(hookRigid.transform.position - this.transform.position)).magnitude;
+
+        if (dis >= hookMove.CurWireLength) playerController.IsWireTensioned = true;
+        else playerController.IsWireTensioned = false;
+
         if (playerController.IsHookAnchored && !playerController.IsHookAnchoredAtOBJ)
         {
             Vector2 dir = ((Vector2)(hookRigid.transform.position - this.transform.position)).normalized;
-            float dis = ((Vector2)(hookRigid.transform.position - this.transform.position)).magnitude;
 
-            if (dis >= hookMove.CurWireLength)
+            if (playerController.IsWireTensioned)
             {
-                playerController.IsWireTensioned = true;
-
                 Vector2 playerSpeed = rigid.linearVelocity;
                 if (Vector2.Dot(playerSpeed, dir) <= 0)
                 {
@@ -118,10 +122,6 @@ public class PlayerMove : BaseMove
                     rigid.linearVelocity = newPlayerSpeed;
                 }
                 rigid.transform.position = hookRigid.transform.position - (Vector3)(dir * hookMove.CurWireLength);
-            }
-            else
-            {
-                playerController.IsWireTensioned = false;
             }
         }
     }

@@ -24,11 +24,11 @@ public class WireRenderer : MonoBehaviour
         //line.material.mainTextureScale = textureTileSize;
     }
 
-    Vector3 endPos;
-    Vector3 startPos;
-    Vector3 center;
+    Vector2 endPos;
+    Vector2 startPos;
+    Vector2 center;
     float slack;
-    Vector3 control;
+    Vector2 control;
 
     private float wireLength;
     private void LateUpdate()
@@ -49,10 +49,7 @@ public class WireRenderer : MonoBehaviour
         float dis = (startPos - endPos).magnitude;
         slack = dis - wireLength;
 
-        control = center + Vector3.down * slack * slackScale;
-
-        startPos.z += 1;
-        endPos.z += 1;
+        control = center + Vector2.down * slack * slackScale;
 
         for (int i = 0; i < pointCount; i++)
         {
@@ -60,7 +57,7 @@ public class WireRenderer : MonoBehaviour
         }
     }
 
-    private Vector3 CalculateCurve(float t)
+    private Vector2 CalculateCurve(float t)
     {
         return Mathf.Pow(1 - t, 2) * startPos +
                2 * (1 - t) * t * control +

@@ -21,6 +21,15 @@ public class HookMove : BaseMove
     private float curWireLength;
     public float CurWireLength { get { return curWireLength; } set { curWireLength = value; } }
 
+    public bool IsHookAnchoredAtOBJ
+    {
+        get
+        {
+            if (playerController != null) return playerController.IsHookAnchoredAtOBJ;
+            else return false;
+        }
+    }
+
     private PlayerController playerController;
     override protected void Awake()
     {
@@ -97,7 +106,7 @@ public class HookMove : BaseMove
     #endregion
 
     private Transform anchoredOBJTransform;
-    private BaseMove anchoredOBJMove;
+    private WirePhysicsMove anchoredOBJMove;
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if ((attachableLayer.value & (1 << collision.gameObject.layer)) != 0)
@@ -106,13 +115,15 @@ public class HookMove : BaseMove
         }
         if ((movingAttachableLayer.value & (1 << collision.gameObject.layer)) != 0)
         {
-            if (collision.TryGetComponent<BaseMove>(out anchoredOBJMove))
+            if (collision.TryGetComponent<WirePhysicsMove>(out anchoredOBJMove))
             {
                 AnchoringHookShot();
                 playerController.IsHookAnchoredAtOBJ = true;
                 this.transform.SetParent(collision.transform);
                 anchoredOBJTransform = collision.transform;
                 this.transform.localPosition = Vector3.zero;
+
+                anchoredOBJMove.AnchoringHook(this, playerController);
             }
         }
     }

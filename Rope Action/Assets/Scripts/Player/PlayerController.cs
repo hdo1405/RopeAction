@@ -69,6 +69,8 @@ public class PlayerController : BaseController
 
     private void InputManage()
     {
+        CheckAlways();
+
         bool isCommonState = true;
 
         //갈고리가 박혔을때
@@ -91,19 +93,16 @@ public class PlayerController : BaseController
             WhenCommon();
         }
 
-        //조준중일 때
-        if (Input.GetMouseButton(1))
-        {
-            DuringAiming();
-        }
-        //조준중이 아닐 때
-        else
-        {
-            DuringNotAiming();
-        }
-
-
-        CheckAlways();
+        ////조준중일 때
+        //if (Input.GetMouseButton(1))
+        //{
+        //    DuringAiming();
+        //}
+        ////조준중이 아닐 때
+        //else
+        //{
+        //    DuringNotAiming();
+        //}
 
         //UpdateMove();
         //UpdateWire();
