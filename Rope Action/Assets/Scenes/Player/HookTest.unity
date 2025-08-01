@@ -1570,7 +1570,7 @@ GameObject:
   - component: {fileID: 793649652}
   - component: {fileID: 793649651}
   - component: {fileID: 793649650}
-  - component: {fileID: 793649649}
+  - component: {fileID: 793649654}
   m_Layer: 6
   m_Name: Square
   m_TagString: Untagged
@@ -1578,45 +1578,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &793649649
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 793649648}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: da25228164bdd29468cdde7782ba1008, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::BaseMove
-  moveSpeed:
-    baseStat: 5
-    add: 0
-    multiple: 1
-    lastAdd: 0
-    lastMultiple: 1
-  accelerateTime: 0.1
-  jumpForce:
-    baseStat: 3
-    add: 0
-    multiple: 1
-    lastAdd: 0
-    lastMultiple: 1
-  baseGravity: 10
-  jumpGravity: 5
-  feetSize: {x: 1, y: 0.1}
-  feetPosOffsetX: 0
-  moveableLayer:
-    serializedVersion: 2
-    m_Bits: 0
-  jumpBufferTime: 0
-  coyoteTime: 0
-  rigid: {fileID: 0}
-  col: {fileID: 0}
-  feetPosOffset: {x: 0, y: 0}
-  isGrounded: 0
-  isLongJump: 0
 --- !u!50 &793649650
 Rigidbody2D:
   serializedVersion: 5
@@ -1763,6 +1724,52 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &793649654
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 793649648}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a97b7a5920ffa6643a5dc2ea2419a451, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WirePhysicsMove
+  moveSpeed:
+    baseStat: 5
+    add: 0
+    multiple: 1
+    lastAdd: 0
+    lastMultiple: 1
+  accelerateTime: 0.1
+  jumpForce:
+    baseStat: 3
+    add: 0
+    multiple: 1
+    lastAdd: 0
+    lastMultiple: 1
+  baseGravity: 10
+  jumpGravity: 5
+  feetSize: {x: 1, y: 0.1}
+  feetPosOffsetX: 0
+  moveableLayer:
+    serializedVersion: 2
+    m_Bits: 0
+  jumpBufferTime: 0
+  coyoteTime: 0
+  rigid: {fileID: 0}
+  col: {fileID: 0}
+  feetPosOffset: {x: 0, y: 0}
+  isGrounded: 0
+  isLongJump: 0
+  isAnchoredByHook: 0
+  mass:
+    baseStat: 1
+    add: 0
+    multiple: 1
+    lastAdd: 0
+    lastMultiple: 1
 --- !u!1 &803967444
 GameObject:
   m_ObjectHideFlags: 0
