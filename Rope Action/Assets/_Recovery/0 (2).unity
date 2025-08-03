@@ -155,7 +155,7 @@ MonoBehaviour:
   - {fileID: 2982075800912092938, guid: 78c12ad24c5326148b27f103334b08a7, type: 3}
   pathObject: {fileID: 8763190186519804837, guid: 6842c3e0adc3ecb41a28fc5d0c501029, type: 3}
   roomSize: 6
-  sideRoomProbability: 20
+  sideRoomProbability: 10
   bossLength: 6
 --- !u!4 &72091336
 Transform:

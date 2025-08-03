@@ -9,7 +9,11 @@ public class CreatingMap : MonoBehaviour
     private int roomMaxCount = 20;
     [SerializeField]
     [Tooltip("생성할 방들의 프래팹들 0: 시작 방, 1: 보스 방, 2: 연결 방들")]
-    private List<GameObject> roomObjects; // 0: 시작 방, 1: 보스 방, 2: 연결 방들
+    private List<GameObject> StartRoomObjects; // 0: 시작 방, 1: 보스 방, 2: 연결 방들
+    [Tooltip("생성할 방들의 프래팹들 0: 시작 방, 1: 보스 방, 2: 연결 방들")]
+    private List<GameObject> BossRoomObjects; // 0: 시작 방, 1: 보스 방, 2: 연결 방들
+    [Tooltip("생성할 방들의 프래팹들 0: 시작 방, 1: 보스 방, 2: 연결 방들")]
+    private List<GameObject> NormalRoomObjects; // 0: 시작 방, 1: 보스 방, 2: 연결 방들
     [SerializeField]
     [Tooltip("길 오브젝트, 가로로 가는 길 넣어주면 됨")]
     private GameObject pathObject;
@@ -30,8 +34,10 @@ public class CreatingMap : MonoBehaviour
 
     private void Start()
     {
+        // 방 머리 속으로만 만들기
         RoomGeneratePathFirst();
 
+        //// 리스트로만 만든 맵을 오브젝트로 생성하는 것
         // 통로 생성
         foreach (var room in rooms)
         {
@@ -68,13 +74,13 @@ public class CreatingMap : MonoBehaviour
             // 시작방, 보스방, 방 생성
             if (room.isStart)
                 // 시작 방 생성
-                roomObject = Instantiate(roomObjects[0], pos, Quaternion.identity);
+                roomObject = Instantiate(StartRoomObjects[Random.Range(0, StartRoomObjects.Count)], pos, Quaternion.identity);
             else if (room.isBoss)
                 // 보스 방 생성
-                roomObject = Instantiate(roomObjects[1], pos, Quaternion.identity);
+                roomObject = Instantiate(BossRoomObjects[Random.Range(0, BossRoomObjects.Count)], pos, Quaternion.identity);
             else
                 // 일반 방들 중에서 무작위로 생성 시키기
-                roomObject = Instantiate(roomObjects[Random.Range(2, roomObjects.Count)], pos, Quaternion.identity);
+                roomObject = Instantiate(NormalRoomObjects[Random.Range(0, NormalRoomObjects.Count)], pos, Quaternion.identity);
 
             RoomDoorCheck(room, roomObject);
         }
@@ -83,7 +89,7 @@ public class CreatingMap : MonoBehaviour
     private void RoomGeneratePathFirst()
     {
         rooms.Clear();
-        roomPoss.Clear();
+        roomPoss.Clear();   
         roomCount = 0;
         createStart = false;
         createBoss = false;
@@ -100,12 +106,19 @@ public class CreatingMap : MonoBehaviour
         roomCount++;
         createStart = true;
 
+        // 보스 방 까지 가는 길 생성
         Room current = startRoom;
+        // 보스 길 까지 반복
         for (int i = 1; i <= bossLength; i++)
         {
+            // 시작방하고 보스방들 중에서 무작위로 가져오고
+            // 연결가능한거 확인, 보스 방은 연결가능한 길로 나와야함
+
+            // 가능한 방향 무작위로 가져오고, 위치 저장
             Vector2Int dir = GetRandomAvailableDirection(current.position);
             Vector2Int newPos = current.position + dir;
 
+            // 새 방 생성 및 리스트에 방과 위치 저장
             Room newRoom = new Room
             {
                 position = newPos,
@@ -120,6 +133,7 @@ public class CreatingMap : MonoBehaviour
 
             current = newRoom;
 
+            // 만약 보스 생성 위치와 거리가 같은 경우, 보스 방으로 생성
             if (i == bossLength)
             {
                 newRoom.isBoss = true;
@@ -129,26 +143,35 @@ public class CreatingMap : MonoBehaviour
 
         // BFS로 나머지 방 확장
         Queue<Room> queue = new Queue<Room>();
+        // 대강 방 추가 되면 나중에 확일할 리스트에 추가 되고 빙빙 돌려가는거
         foreach (var r in rooms)
         {
-            if (!r.isBoss && !r.isStart)
+            // 시작방과 보스방이 아니면 넣는다. 아직도 왜 GPT가 넣은지 모르는거
+            //if (!r.isBoss && !r.isStart)
                 queue.Enqueue(r);
         }
 
+        // 최대 생성 갯수 만들 때 까지 반복
         while (queue.Count > 0 && roomCount < roomMaxCount)
         {
+            // 추가로 생성된거, 확장할 리스트에 추가
             Room room = queue.Dequeue();
+            // 랜덤 방향 섞기, 굳이 인거 같긴한데 일단 놔둠
             List<Vector2Int> dirs = GetShuffledDirections();
 
             foreach (Vector2Int dir in dirs)
             {
+                // 방 갯수 초과 확인
                 if (roomCount >= roomMaxCount) break;
 
+                // 생성할 방 위치
                 Vector2Int newPos = room.position + dir;
+                // 중복 체크
                 if (roomPoss.Contains(newPos)) continue;
+                // 마지막 방이 아니거나, 확률이 나오지 않은 경우 다음방 확인
+                if (queue.Count != 0 && Random.Range(0f, 100f) > sideRoomProbability) continue;
 
-                if (Random.Range(0f, 100f) > sideRoomProbability) continue;
-
+                // 새방 생성
                 Room newRoom = new Room
                 {
                     position = newPos,
@@ -167,18 +190,22 @@ public class CreatingMap : MonoBehaviour
         }
     }
 
+    // 방향중에 남은 방향 가져오기
     private Vector2Int GetRandomAvailableDirection(Vector2Int from)
     {
+        // 무작위로 선택되게 섞기
         List<Vector2Int> dirs = GetShuffledDirections();
         foreach (var dir in dirs)
         {
-            Vector2Int target = from + dir;
+            Vector2Int target = from + dir; 
+            // 남은 자리 있으면 리턴
             if (!roomPoss.Contains(target))
                 return dir;
         }
         return Vector2Int.up;
     }
 
+    // 방향 생성 후 섞기
     private List<Vector2Int> GetShuffledDirections()
     {
         List<Vector2Int> dirs = new List<Vector2Int>
@@ -190,6 +217,7 @@ public class CreatingMap : MonoBehaviour
         return dirs;
     }
 
+    // 방향 섞기
     private void Shuffle(List<Vector2Int> list)
     {
         for (int i = list.Count - 1; i > 0; i--)
@@ -201,8 +229,7 @@ public class CreatingMap : MonoBehaviour
         }
     }
 
-    // 방의 문 열어버리는것
-
+    // 방의 문,벽 확인하기
     private void RoomDoorCheck(Room room, GameObject roomObject)
     {
         // 방 문 열기 및 벽 계산
