@@ -89,18 +89,24 @@ public class BaseMove : MonoBehaviour
     /// <summary>
     /// 이동 담당. 현재로선 target받고 target에 이속 곱해주지만, 바뀔 수 있다.
     /// </summary>
-    /// <param name="target"> 이동하고자 하는 방향.</param>
-    virtual public void MoveTo(Vector3 target)
+    /// <param name="dir"> 이동하고자 하는 방향.</param>
+    virtual public void MoveTo(Vector3 dir)
     {
         //curTargetPos = target;
 
-        rigid.linearVelocity = target * moveSpeed.FinalStat();
+        rigid.linearVelocity = dir * moveSpeed.FinalStat();
     }
     virtual public void MoveTo(Transform target)
     {
-        //curTargetPos = target;
-
-        rigid.linearVelocity = target.position * moveSpeed.FinalStat();
+        rigid.linearVelocity = (target.position - this.transform.position).normalized * moveSpeed.FinalStat();
+    }
+    virtual public void MoveTo(Vector3 dir, float speed)
+    {
+        rigid.linearVelocity = dir * speed;
+    }
+    virtual public void MoveTo(Transform target, float speed)
+    {
+        rigid.linearVelocity = (target.position - this.transform.position) * speed;
     }
 
     protected float curVelocity;
@@ -208,7 +214,7 @@ public class BaseMove : MonoBehaviour
     [Header("땅 판정")]
     [Tooltip("땅 판정 bool")]
     [SerializeField] protected bool isGrounded = false;
-    public bool IsGrounded{get{ return isGrounded; }}
+    public bool IsGrounded { get { return isGrounded; } }
 
     [Header("점프키를 계속 누르고 있는지")]
     public bool isLongJump = false;
