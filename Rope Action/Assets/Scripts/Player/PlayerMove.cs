@@ -8,28 +8,58 @@ public class PlayerMove : BaseMove
     private Rigidbody2D hookRigid;
     private HookMove hookMove;
     private PlayerController playerController;
+    [SerializeField] protected Vector2 wallDetectorSize = new Vector2(0.2f, 0.1f);
+    protected Vector2 wallDetectorPos;
+    protected bool isAttatchedWall = false;
 
     [Header("---------------------------------------------------------------------------------------")]
+    #region Stat
     [Header("스텟")]
+
+    [Tooltip("달리기 속도 배율")]
+    [SerializeField] protected float runSpeedScale = 1.2f;
+
+    [Tooltip("벽타기 속도")]
+    [SerializeField] protected Definition.FStat climbSpeed = new Definition.FStat(5f);
+
     [Tooltip("점프 횟수")]
     [SerializeField] protected Definition.IStat maxJumpCount = new Definition.IStat(2);
     public Definition.IStat MaxJumpCount { get { return maxJumpCount; } }
+
     [Tooltip("스윙 점프")]
     [SerializeField] protected Definition.FStat wireJumpForce = new Definition.FStat(3f);
     public Definition.FStat WireJumpForce { get { return wireJumpForce; } }
+
     [Tooltip("와이어 점프")]
     [SerializeField] protected Definition.FStat swingJumpForce = new Definition.FStat(3f);
-    public Definition.FStat SwingJumpForce { get { return swingJumpForce; } }
+    public Definition.FStat SwingJumpForce { get { return swingJumpForce; } } 
+    #endregion
 
     protected override void Awake()
     {
         base.Awake();
+
         playerController = (PlayerController)baseController;
         hookRigid.TryGetComponent(out hookMove);
+
+        if (col != null)
+        {
+            float localMidY = col.bounds.center.y - transform.position.y;
+            float localEdgeX = col.bounds.max.x- transform.position.x;
+            wallDetectorPos = new Vector2(localEdgeX, localMidY);
+        }
     }
+    protected override void Update()
+    {
+        base.Update();
+        CheckWall();
+    }
+
 
     public override void MoveToX(float x)
     {
+        bool isRun = false;
+        if (Mathf.Abs(x) > 1) isRun = true;
         if (x != 0) x = Mathf.Sign(x);
         else
         {
@@ -43,23 +73,26 @@ public class PlayerMove : BaseMove
 
         if (x == Mathf.Sign(rigid.linearVelocityX))
         {
-            if (Mathf.Abs(rigid.linearVelocityX) < x * x * moveSpeed.FinalStat())
+            if (Mathf.Abs(rigid.linearVelocityX) < moveSpeed.FinalStat())
             {
                 float newSpeed = Mathf.SmoothDamp(rigid.linearVelocityX, x * moveSpeed.FinalStat(), ref curVelocity, accelerateTime);
+                if (isRun) newSpeed *= runSpeedScale;
                 rigid.linearVelocityX = newSpeed;
             }
         }
         else
         {
             float newSpeed = Mathf.SmoothDamp(rigid.linearVelocityX, x * moveSpeed.FinalStat(), ref curVelocity, accelerateTime);
+            if (isRun) newSpeed *= runSpeedScale;
             rigid.linearVelocityX = newSpeed;
         }
     }
 
+
     [SerializeField] private int remainedJumpCount = 0;
     protected override void JumpAdditive()
     {
-        if (isGrounded)
+        if (isGrounded || isAttatchedWall)
         {
             remainedJumpCount = maxJumpCount.FinalStat() - 1;
             coyoteTimer = coyoteTime;
@@ -92,6 +125,63 @@ public class PlayerMove : BaseMove
             {
                 SwingJump();
             }
+        }
+    }
+
+    protected override void JumpHeightUpdate()
+    {
+        if (isAttatchedWall) return;
+        if (isLongJump && rigid.linearVelocityY >= 0)
+        {
+            rigid.gravityScale = jumpGravity;
+        }
+        else
+        {
+            rigid.gravityScale = baseGravity;
+        }
+    }
+
+    protected void CheckWall()
+    {
+        if (rigid.linearVelocityX == 0)
+        {
+            isAttatchedWall = false;
+            return;
+        }
+
+        if (Mathf.Sign(wallDetectorPos.x) != Mathf.Sign(rigid.linearVelocityX))
+        {
+            wallDetectorPos.x *= -1;
+        }
+
+        Vector2 temp = (Vector2)this.transform.position + wallDetectorPos;
+        isAttatchedWall = Physics2D.OverlapBox(temp, feetSize, 0f, moveableLayer) != null;
+
+        if (isAttatchedWall)
+        {
+            if (rigid.linearVelocityY > climbSpeed.FinalStat())
+                isAttatchedWall = false;
+        }
+
+        if (isAttatchedWall)
+        {
+            rigid.gravityScale = 0;
+        }
+        else
+        {
+            rigid.gravityScale = baseGravity;
+        }
+    }
+
+    float curClimbVelocity = 0;
+    public void WallClimb(float y)
+    {
+        if (isAttatchedWall)
+        {
+            if (y != 0) y = Mathf.Sign(y);
+
+            float newSpeed = Mathf.SmoothDamp(rigid.linearVelocityY, y * climbSpeed.FinalStat(), ref curClimbVelocity, accelerateTime);
+            rigid.linearVelocityY = newSpeed;
         }
     }
 

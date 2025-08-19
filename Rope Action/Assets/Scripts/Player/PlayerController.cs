@@ -13,9 +13,15 @@ public class PlayerController : BaseController
     [SerializeField]
     private KeyCode jumpKeyCode = KeyCode.Space;
     [SerializeField]
+    private KeyCode runKeyCode = KeyCode.LeftControl;
+    [SerializeField]
     private KeyCode leftKeyCode = KeyCode.A;
     [SerializeField]
     private KeyCode rightKeyCode = KeyCode.D;
+    [SerializeField]
+    private KeyCode upKeyCode = KeyCode.W;
+    [SerializeField]
+    private KeyCode downKeyCode = KeyCode.S;
     [SerializeField]
     private KeyCode hookReturnKeyCode = KeyCode.R;
     [SerializeField]
@@ -45,6 +51,14 @@ public class PlayerController : BaseController
     [SerializeField]
     private Vector2 mouseDir;
     public Vector2 MouseDir { get { return mouseDir; } }
+    public float FloatMouseDir 
+    {
+        get 
+        {
+            float angle = Mathf.Atan2(mouseDir.y, mouseDir.x) * Mathf.Rad2Deg;
+            return angle;
+        }
+    }
 
 
     protected PlayerMove playerMove;
@@ -86,7 +100,7 @@ public class PlayerController : BaseController
 
             isCommonState = false;
         }
-        
+
         //특이사항이 없을때
         if (isCommonState)
         {
@@ -111,17 +125,13 @@ public class PlayerController : BaseController
     private void DuringHookAnchored()
     {
         //if (Input.GetKey(hookReturnKeyCode))
-        if(Input.GetMouseButtonUp(1))
-        {
-            hookMove.ReturnHookShot();
-        }
         if (Input.GetKey(wireJumpKeyCode))
         {
-            if (isHookAnchoredAtOBJ)
-            {
-                hookMove.PullingAnchoredOBJ();
-            }
-            else
+            //if (isHookAnchoredAtOBJ)
+            //{
+            //    hookMove.PullingAnchoredOBJ();
+            //}
+            //else
             {
                 playerMove.WireJump();
             }
@@ -163,7 +173,9 @@ public class PlayerController : BaseController
             playerMove.isLongJump = false;
         }
 
+        #region Walk & Run
         int x = 0;
+        int isRun = 1;
         if (Input.GetKey(leftKeyCode))
         {
             x -= 1;
@@ -172,6 +184,10 @@ public class PlayerController : BaseController
         {
             x += 1;
         }
+        if (Input.GetKey(runKeyCode))
+        {
+            isRun = 2;
+        }
 
         if (x != 0 && playerMove.IsGrounded)
         {
@@ -179,19 +195,46 @@ public class PlayerController : BaseController
         }
 
         if (x != 0)
-            playerMove.MoveToX(x);
+        {
+            playerMove.MoveToX(isRun * x);
+        }
         else if (!IsWireTensioned)
+        {
             playerMove.MoveToX(x);
+        }
         #endregion
 
-        if (Input.GetMouseButtonDown(0))
+        int y = 0;
+        if (Input.GetKey(downKeyCode))
         {
-            crossHairRenderer.showCrossHair = true;
+            y -= 1;
         }
-        else if (Input.GetMouseButtonUp(0))
+        if (Input.GetKey(upKeyCode))
         {
-            crossHairRenderer.showCrossHair = false;
+            y += 1;
         }
+
+        playerMove.WallClimb(y);
+        #endregion
+
+        if (Input.GetMouseButtonUp(1))
+        {
+            hookMove.ReturnHookShot();
+        }
+
+        if (Input.GetMouseButton(0))
+        {
+            ((PlayerAttack)baseAttack).Attack();
+        }
+
+        //if (Input.GetMouseButtonDown(0))
+        //{
+        //    crossHairRenderer.showCrossHair = true;
+        //}
+        //else if (Input.GetMouseButtonUp(0))
+        //{
+        //    crossHairRenderer.showCrossHair = false;
+        //}
     }
 
     //구시대의 유물들

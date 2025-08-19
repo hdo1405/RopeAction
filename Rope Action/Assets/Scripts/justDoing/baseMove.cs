@@ -98,7 +98,7 @@ public class BaseMove : MonoBehaviour
     }
     virtual public void MoveTo(Transform target)
     {
-        rigid.linearVelocity = (target.position - this.transform.position) * moveSpeed.FinalStat();
+        rigid.linearVelocity = (target.position - this.transform.position).normalized * moveSpeed.FinalStat();
     }
     virtual public void MoveTo(Vector3 dir, float speed)
     {
