@@ -230,6 +230,7 @@ public class PlayerMove : BaseMove
 
     public void WireJump()
     {
+        if (!playerController.IsHookAnchored) return;
         Vector2 dir = ((Vector2)(hookRigid.transform.position - this.transform.position)).normalized;
 
         rigid.linearVelocity += dir * wireJumpForce.FinalStat();
@@ -263,6 +264,7 @@ public class PlayerMove : BaseMove
 
     public void SwingJump()
     {
+        if (!playerController.IsHookAnchored) return;
         //Debug.Log("swing start");
         float wireJumpScale = rigid.linearVelocity.magnitude / moveSpeed.FinalStat();
         //Debug.Log("wireJumpSclae: " + wireJumpScale);

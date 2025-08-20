@@ -78,8 +78,12 @@ public class HookMove : BaseMove
         {
             return;
         }
+        else
+        {
+            curWireLength = ((Vector2)(player.transform.position - this.transform.position)).magnitude;
+        }
 
-        if (((Vector2)(player.transform.position - this.transform.position)).magnitude > maxWireLength.FinalStat())
+        if (curWireLength > maxWireLength.FinalStat())
         {
             ReturnHookShot();
             return;
