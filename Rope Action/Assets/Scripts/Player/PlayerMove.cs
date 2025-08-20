@@ -5,6 +5,8 @@ public class PlayerMove : BaseMove
     [Header("---------------------------------------------------------------------------------------")]
     [Header("플레이어 무브")]
     [SerializeField]
+    private SpriteRenderer spriteRenderer;
+    [SerializeField]
     private Rigidbody2D hookRigid;
     private HookMove hookMove;
     private PlayerController playerController;
@@ -69,6 +71,15 @@ public class PlayerMove : BaseMove
                 rigid.linearVelocityX = newSpeed;
             }
             return;
+        }
+
+        if (x > 0)
+        {
+            spriteRenderer.flipX = false;
+        }
+        else if (x < 0)
+        {
+            spriteRenderer.flipX = true;
         }
 
         if (x == Mathf.Sign(rigid.linearVelocityX))
